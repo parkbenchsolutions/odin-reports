@@ -8,6 +8,7 @@ This repository provides a robust solution for generating daily reports from Bro
 
 - **Automated Daily Call Reports**: Fetches and aggregates call records from all Service Providers.
 - **Global User Data Extraction**: Extracts comprehensive user data across all Service Providers.
+- **Per Service Provider User Reports**: Fetches comprehensive user data across select Service Providers.
 - **Flexible Output**: Export results to CSV, upload via SFTP, and send summary emails.
 - **Interactive Notebooks**: Jupyter/Colab notebooks wrap the script for step-by-step, testable workflows.
 - **Easy Configuration**: All credentials and settings are managed via environment variables or notebook cells.
