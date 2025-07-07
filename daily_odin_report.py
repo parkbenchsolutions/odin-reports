@@ -767,7 +767,7 @@ class ReportExporter:
             self.logger.error(f"Error uploading to SFTP: {str(e)}")
             return False
     
-    def send_email_report(self, csv_files: List[str], summary_stats: Dict) -> bool:
+    def send_email_report(self, csv_files: List[str], summary_stats: Dict, report_type: str = "call") -> bool:
         """
         Send email report with CSV attachments
         """
@@ -776,10 +776,12 @@ class ReportExporter:
             msg = MIMEMultipart()
             msg['From'] = self.config.smtp_from
             msg['To'] = ', '.join(self.config.smtp_to)
-            msg['Subject'] = f"Daily Odin Report - {datetime.now().strftime('%Y-%m-%d')}"
-            
-            # Create email body
-            body = self._create_email_body(summary_stats)
+            if report_type == "user":
+                msg['Subject'] = f"Odin User Report - {datetime.now().strftime('%Y-%m-%d')}"
+                body = self._create_user_email_body(summary_stats)
+            else:
+                msg['Subject'] = f"Daily Odin Report - {datetime.now().strftime('%Y-%m-%d')}"
+                body = self._create_email_body(summary_stats)
             msg.attach(MIMEText(body, 'html'))
             
             # Attach CSV files
@@ -830,6 +832,37 @@ class ReportExporter:
             </ul>
             
             <p>This report was generated automatically by the Daily Odin Report system.</p>
+        </body>
+        </html>
+        """
+        return html_body
+    
+    def _create_user_email_body(self, summary_stats: Dict) -> str:
+        """
+        Create HTML email body for user report with summary statistics
+        """
+        html_body = f"""
+        <html>
+        <head></head>
+        <body>
+            <h2>Odin User Report Summary</h2>
+            <p>Report generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <h3>Overall Statistics</h3>
+            <ul>
+                <li>Total Service Providers: {summary_stats.get('total_service_providers', 0)}</li>
+                <li>Total Groups: {summary_stats.get('total_groups', 0)}</li>
+                <li>Total Users: {summary_stats.get('total_users', 0):,}</li>
+                <li>Active Users: {summary_stats.get('active_users', 0):,}</li>
+                <li>Users with Email: {summary_stats.get('users_with_email', 0):,}</li>
+                <li>Users with Phone: {summary_stats.get('users_with_phone', 0):,}</li>
+                <li>Users with Extension: {summary_stats.get('users_with_extension', 0):,}</li>
+            </ul>
+            <h3>Attached Files</h3>
+            <ul>
+                <li><strong>global_user_data.csv</strong> - Detailed user data for all service providers</li>
+                <li><strong>user_summary_by_service_provider.csv</strong> - Summary metrics by Service Provider</li>
+            </ul>
+            <p>This report was generated automatically by the Odin User Report system.</p>
         </body>
         </html>
         """
@@ -1076,7 +1109,7 @@ class GlobalUserDataExtractor:
             # Step 6: Send email report (if configured)
             if self.config.smtp_host:
                 summary_stats = self._calculate_summary_stats(df_users, df_summary)
-                self.exporter.send_email_report(csv_files, summary_stats)
+                self.exporter.send_email_report(csv_files, summary_stats, report_type='user')
             
             self.logger.info("Global user data extraction completed successfully")
             return True
