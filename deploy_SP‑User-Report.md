@@ -102,9 +102,9 @@ These instructions will:
    ```
 
 ### 4. Command‑Line Usage
-   # Run report: `python run_user_report.py`
-   # No flag = all SPs
-   # Flag { -s <SP_ID_1> <SP_ID_2> => hand picked list of Service Provider(s)
+Run report: `python run_user_report.py` \
+No flag = all SPs \
+Flag { -s <SP_ID_1> <SP_ID_2> => hand picked list of Service Provider(s)
 
 | Scenario                   | Command                                               |
 | -------------------------- | ----------------------------------------------------- |
@@ -159,4 +159,5 @@ These instructions will:
 ### All set!
 
 Your scheduled jobs will now generate user reports—either global or limited to specific Service Providers—and deliver them automatically each cycle.
+
 
