@@ -61,7 +61,7 @@ These instructions will:
    chmod +x run_user_report.py
    ```
 
-### 6. **Create your **\`\`** file with the necessary environment variables**
+### 6. **Create your **\`.env\`** file with the necessary environment variables**
 
    ```bash
    cat > .env <<EOF
@@ -159,3 +159,4 @@ These instructions will:
 ### All set!
 
 Your scheduled jobs will now generate user reports—either global or limited to specific Service Providers—and deliver them automatically each cycle.
+
