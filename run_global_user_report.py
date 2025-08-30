@@ -19,6 +19,7 @@ $ ODIN_API_BASE_URL=https://bw-odin.example.com \
 
 import argparse, logging, os, sys
 from pathlib import Path
+from dotenv import load_dotenv
 
 from daily_odin_report import Config, GlobalUserDataExtractor      # noqa: E402
 
@@ -34,31 +35,35 @@ def _parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def _load_dotenv(dotenv_path: str) -> None:
-    """Tiny .env reader (avoids extra dependency)."""
-    env_file = Path(dotenv_path)
-    if not env_file.is_file():
-        return
-    for line in env_file.read_text().splitlines():
-        if not line.strip() or line.lstrip().startswith("#"):
-            continue
-        k, _, v = line.partition("=")
-        if k and v:
-            os.environ.setdefault(k.strip(), v.strip())
-
-
 # --------------------------------------------------------------------------- #
 # main                                                                        #
 # --------------------------------------------------------------------------- #
 def main() -> int:
     args = _parse_args()
-    _load_dotenv(args.config)
+    
+    # Load environment variables FIRST, before creating Config
+    load_dotenv(args.config)
+    
+    # Debug: Print loaded environment variables
+    if args.debug:
+        print(f"DEBUG: ODIN_API_BASE_URL = '{os.getenv('ODIN_API_BASE_URL')}'")
+        print(f"DEBUG: ODIN_API_USERNAME = '{os.getenv('ODIN_API_USERNAME')}'")
+        print(f"DEBUG: Config file loaded: {args.config}")
 
     log_level = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(level=log_level,
-                        format="%(asctime)s %(levelname)s %(message)s")
+    logging.basicConfig(
+        level=log_level, format="%(asctime)s %(levelname)s %(message)s"
+    )
 
-    cfg = Config()                                # pulls everything from env
+    cfg = Config()  # pulls from environment
+    
+    # Additional debug output for Config values
+    if args.debug:
+        print(f"DEBUG: Config loaded with:")
+        print(f"  api_base_url: '{cfg.api_base_url}'")
+        print(f"  api_username: '{cfg.api_username}'")
+        print(f"  api_password: {'*' * len(cfg.api_password) if cfg.api_password else '(empty)'}")
+      
     extractor = GlobalUserDataExtractor(cfg)
 
     ok = extractor.run()                          # handles SFTP + e-mail
@@ -67,3 +72,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
