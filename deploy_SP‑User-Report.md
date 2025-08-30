@@ -24,50 +24,44 @@ The wrapper then delivers the resulting CSVs via SFTP and/or e‑mail.
 
 These instructions will:
 * Clone the `parkbenchsolutions-odin-reports` repository from GitHub.
-* Deploy the scripts into `/opt/odin`.
+* Deploy the scripts into `./odin-reports`.
 
 ---
 
-### 1. **Clone the repository**
+### 1. **Clone the repository from desired deployment directory**
 
    ```bash
-   git clone https://github.com/parkbenchsolutions/odin-reports.git ~/odin-reports
+   git clone https://github.com/parkbenchsolutions/odin-reports.git
    ```
 
-### 2. **Create deployment directory and copy scripts**
+### 2. **Navigate to the Odin Reports deployment directory**
 
    ```bash
-   sudo mkdir -p /opt/odin
-   sudo chown $USER /opt/odin
-   cp ~/odin-reports/deploy_SP-User-Report.md ~/odin-reports/run_user_report.py ~/odin-reports/daily_odin_report.py /opt/odin/
+   sudo chown $USER ./odin-reports
+   cd odin-reports
    ```
 
-### 3. **Enter the deployment directory**
+### 3. **Set up a Python virtual environment**
 
    ```bash
-   cd /opt/odin
+   sudo apt install python3-venv
+   python3 -m venv myvenv
+   source myvenv/bin/activate
    ```
 
-### 4. **Set up a Python virtual environment**
+### 4. **Install required Python packages**
 
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   pip install -r requirements.txt
    ```
 
-### 5. **Install required Python packages**
-
-   ```bash
-   pip install pandas requests paramiko python-dateutil
-   ```
-
-### 6. **Make the wrapper executable**
+### 5. **Make the wrapper executable**
 
    ```bash
    chmod +x run_user_report.py
    ```
 
-### 7. **Create your **\`\`** file with the necessary environment variables**
+### 6. **Create your **\`\`** file with the necessary environment variables**
 
    ```bash
    cat > .env <<EOF
@@ -76,23 +70,23 @@ These instructions will:
    ODIN_API_USERNAME=bw-api-svc
    ODIN_API_PASSWORD=SuperSecret!
 
-   # SFTP (optional)
-   SFTP_HOST=sftp.reporting.example.com
-   SFTP_PORT=22
-   SFTP_USERNAME=odin-report
-   SFTP_PASSWORD=AnotherSecret
-   SFTP_REMOTE_PATH=/incoming/odin/users
+   # SFTP (optional) - remove comment '#'
+   #SFTP_HOST=sftp.reporting.example.com
+   #SFTP_USERNAME=odin-report
+   #SFTP_PASSWORD=AnotherSecret
+   #SFTP_PORT=22
+   #SFTP_REMOTE_PATH=/odin/reports
 
-   # SMTP (optional)
-   SMTP_HOST=smtp.office365.com
-   SMTP_PORT=587
-   SMTP_USERNAME=reports@yourco.com
-   SMTP_PASSWORD=EmailSecret
-   SMTP_FROM=reports@yourco.com
-   SMTP_TO=ops@yourco.com,noc@yourco.com
+   # SMTP (optional) - remove comment '#'
+   #SMTP_HOST="mail.smtp2go.com" 
+   #SMTP_PORT=2525
+   #SMTP_USERNAME=reports@yourco.com
+   #SMTP_PASSWORD=EmailSecret
+   #SMTP_FROM=reports@yourco.com
+   #SMTP_TO=ops@yourco.com,noc@yourco.com
 
    # Misc
-   OUTPUT_DIR=/var/tmp/odin-user-reports
+   OUTPUT_DIR=./reports
    BATCH_SIZE=500
    MAX_RETRIES=3
    RETRY_DELAY=5
@@ -101,23 +95,30 @@ These instructions will:
    EOF
    ```
 
-### 8. **Edit the **\`\`** file to customize your settings**
+### 7. **Edit the **\`\`** file to customize your settings**
 
    ```bash
    nano .env
    ```
 
-### 9. **Test the deployment for one or more SPs**
-
-   ```bash
-   source venv/bin/activate
-
-   # Run report: ./run_user_report.py
+### 4. Command‑Line Usage
+   # Run report: `python run_user_report.py`
    # No flag = all SPs
    # Flag { -s <SP_ID_1> <SP_ID_2> => hand picked list of Service Provider(s)
 
+| Scenario                   | Command                                               |
+| -------------------------- | ----------------------------------------------------- |
+| All SPs *(default)*        | `python run_user_report.py`                           |
+| Two specific SPs           | `python run_user_report.py -s acme contoso`           |
+| Alternate env file + debug | `python run_user_report.py -c /path/prod.env --debug` |
+
+### 8. **Deployment for one or more SPs**
+
+   ```bash
+   source myvenv/bin/activate
+
    # Run User Report for Service Providers ‘acme’ ‘contoso’
-   ./run_user_report.py -s acme contoso
+   python run_user_report.py -s acme contoso
    ```
 
 ### 10. **Optional: Schedule a Cron job**
@@ -142,70 +143,9 @@ These instructions will:
 
 ---
 
-## 3. Configuration via .env
+# Appendix
 
-Create `/opt/odin/.env` (or point to another file with `-c`). Only Odin API creds are mandatory; SFTP/SMTP are optional.
-
-```dotenv
-# Odin API
-ODIN_API_BASE_URL=https://bw-odin.example.com
-ODIN_API_USERNAME=bw-api-svc
-ODIN_API_PASSWORD=SuperSecret!
-
-# SFTP (optional)
-SFTP_HOST=sftp.reporting.example.com
-SFTP_PORT=22
-SFTP_USERNAME=odin-report
-SFTP_PASSWORD=AnotherSecret
-SFTP_REMOTE_PATH=/incoming/odin/users
-
-# SMTP (optional)
-SMTP_HOST=smtp.office365.com
-SMTP_PORT=587
-SMTP_USERNAME=reports@yourco.com
-SMTP_PASSWORD=EmailSecret
-SMTP_FROM=reports@yourco.com
-SMTP_TO=ops@yourco.com, noc@yourco.com
-
-# Misc
-OUTPUT_DIR=/var/tmp/odin-user-reports
-BATCH_SIZE=500
-MAX_RETRIES=3
-RETRY_DELAY=5
-INCLUDE_OPTIONAL_FIELDS=true
-LOG_LEVEL=INFO
-```
-
----
-
-## 4. Command‑Line Usage
-
-| Scenario                   | Command                                               |
-| -------------------------- | ----------------------------------------------------- |
-| All SPs *(default)*        | `python run_user_report.py`                           |
-| Two specific SPs           | `python run_user_report.py -s acme contoso`           |
-| Alternate env file + debug | `python run_user_report.py -c /path/prod.env --debug` |
-
-Exit status `0` = success; `1` = failure.
-
----
-
-## 5. Cron Scheduling Examples
-
-```cron
-# America/New_York timezone for clarity
-CRON_TZ=America/New_York
-
-# 1) Nightly export across *all* SPs (02:20)
-20 2 * * * /usr/bin/env bash -c 'cd /opt/odin && source venv/bin/activate && ./run_user_report.py >> /var/log/odin/users_all.log 2>&1'
-
-# 2) Weekly export for ACME & CONTOSO every Monday (03:05)
-5 3 * * 1 /usr/bin/env bash -c 'cd /opt/odin && source venv/bin/activate && ./run_user_report.py -s acme contoso >> /var/log/odin/users_acme_contoso.log 2>&1'
-```
-
----
-
-## 6. Troubleshooting Quick‑Ref
+## Troubleshooting Quick‑Ref
 
 | Symptom                              | Cause                              | Fix                                                      |
 | ------------------------------------ | ---------------------------------- | -------------------------------------------------------- |
@@ -216,29 +156,6 @@ CRON_TZ=America/New_York
 
 ---
 
-## 7. Updating
-
-```bash
-cd /opt/odin
-cp /new/run_user_report.py .
-cp /new/daily_odin_report.py .
-source venv/bin/activate
-pip install --upgrade -r requirements.txt   # if needed
-```
-
-No change to cron or `.env` required unless new variables are introduced.
-
----
-
-## 8. Security Notes
-
-* Store `.env` outside version control; restrict file permissions (`chmod 600`).
-* Consider a secrets manager for production deployments.
-* CSVs may contain PII—protect at rest and in transit.
-
----
-
 ### All set!
 
 Your scheduled jobs will now generate user reports—either global or limited to specific Service Providers—and deliver them automatically each cycle.
-
