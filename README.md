@@ -22,9 +22,9 @@ This repository provides a robust solution for generating daily reports from Bro
 ### 🧑‍💻 Interactive Jupyter/Colab Notebooks
 For interactive, step-by-step reporting, data exploration, and ad-hoc analysis, this repository provides ready-to-use Jupyter/Colab notebooks:
 
-- **`odin_daily_call_report_colab_v01.ipynb`** — Colab/Jupyter notebook for daily call reports. Lets you configure, run, and analyze daily call detail records interactively.
-- **`odin_global_user_report_colab_v01.ipynb`** — Colab/Jupyter notebook for global user data extraction. Extracts and explores user data across all Service Providers.
-- **`odin_user_report_data_colab_v01.ipynb`** — Colab/Jupyter notebook for per-service-provider user reports. Generate and analyze user reports for individual Service Providers.
+- **`odin_daily_call_report_{colab/vscode}_v01.ipynb`** — Colab/Jupyter notebook for daily call reports. Lets you configure, run, and analyze daily call detail records interactively.
+- **`odin_global_user_report_{colab/vscode}_v01.ipynb`** — Colab/Jupyter notebook for global user data extraction. Extracts and explores user data across all Service Providers.
+- **`odin_user_report_data_{colab/vscode}_v01.ipynb`** — Colab/Jupyter notebook for per-service-provider user reports. Generate and analyze user reports for individual Service Providers.
 
 Each notebook:
 - Wraps the core logic in `daily_odin_report.py` for modular, testable execution
@@ -54,40 +54,7 @@ Each wrapper script:
 
 ## Quick Start
 
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/your-org/odin-daily-reporting-toolkit.git
-cd odin-daily-reporting-toolkit
-```
-
-### 2. Install Requirements
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Configure Environment Variables
-
-Set the following environment variables (e.g., in your shell, `.env` file, or notebook cell):
-
-- `ODIN_API_BASE_URL`
-- `ODIN_API_USERNAME`
-- `ODIN_API_PASSWORD`
-- `REPORT_START_DATE` (optional, default: yesterday)
-- `REPORT_END_DATE` (optional, default: yesterday)
-- `SFTP_HOST`, `SFTP_USERNAME`, `SFTP_PASSWORD` (optional)
-- `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `SMTP_TO` (optional)
-
-### 4. Run the Script (Automated)
-
-```bash
-python odin-reports/daily_odin_report.py
-```
-
-Schedule with `cron` or Windows Task Scheduler for daily automation.
-
-### 5. Use in Google Colab (Interactive)
+### Use in Google Colab (Interactive)
 
 - Open any of the provided `.ipynb` notebooks in [Google Colab](https://colab.research.google.com/).
 - Upload the latest `daily_odin_report.py` when prompted.
