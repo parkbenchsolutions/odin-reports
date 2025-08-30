@@ -36,27 +36,27 @@ from io import StringIO
 @dataclass
 class Config:
     # API Configuration
-    api_base_url: str = os.getenv('ODIN_API_BASE_URL', '')
-    api_username: str = os.getenv('ODIN_API_USERNAME', '')
-    api_password: str = os.getenv('ODIN_API_PASSWORD', '')
+    api_base_url: str = field(default_factory=lambda: os.getenv('ODIN_API_BASE_URL', ''))
+    api_username: str = field(default_factory=lambda: os.getenv('ODIN_API_USERNAME', ''))
+    api_password: str = field(default_factory=lambda: os.getenv('ODIN_API_PASSWORD', ''))
     
     # Date range for call records (default: yesterday)
-    start_date: str = os.getenv('REPORT_START_DATE', '')
-    end_date: str = os.getenv('REPORT_END_DATE', '')
+    start_date: str = field(default_factory=lambda: os.getenv('REPORT_START_DATE', ''))
+    end_date: str = field(default_factory=lambda: os.getenv('REPORT_END_DATE', ''))
     
     # SFTP Configuration
-    sftp_host: str = os.getenv('SFTP_HOST', '')
-    sftp_port: int = int(os.getenv('SFTP_PORT', '22'))
-    sftp_username: str = os.getenv('SFTP_USERNAME', '')
-    sftp_password: str = os.getenv('SFTP_PASSWORD', '')
-    sftp_remote_path: str = os.getenv('SFTP_REMOTE_PATH', '/reports/')
+    sftp_host: str = field(default_factory=lambda: os.getenv('SFTP_HOST', ''))
+    sftp_port: int = field(default_factory=lambda: int(os.getenv('SFTP_PORT', '22')))
+    sftp_username: str = field(default_factory=lambda: os.getenv('SFTP_USERNAME', ''))
+    sftp_password: str = field(default_factory=lambda: os.getenv('SFTP_PASSWORD', ''))
+    sftp_remote_path: str = field(default_factory=lambda: os.getenv('SFTP_REMOTE_PATH', '/reports/'))
     
     # Email Configuration
-    smtp_host: str = os.getenv('SMTP_HOST', '')
-    smtp_port: int = int(os.getenv('SMTP_PORT', '587'))
-    smtp_username: str = os.getenv('SMTP_USERNAME', '')
-    smtp_password: str = os.getenv('SMTP_PASSWORD', '')
-    smtp_from: str = os.getenv('SMTP_FROM', '')
+    smtp_host: str = field(default_factory=lambda: os.getenv('SMTP_HOST', ''))
+    smtp_port: int = field(default_factory=lambda: int(os.getenv('SMTP_PORT', '587')))
+    smtp_username: str = field(default_factory=lambda: os.getenv('SMTP_USERNAME', ''))
+    smtp_password: str = field(default_factory=lambda: os.getenv('SMTP_PASSWORD', ''))
+    smtp_from: str = field(default_factory=lambda: os.getenv('SMTP_FROM', ''))
     smtp_to: List[str] = field(
         default_factory=lambda: [
             a.strip() for a in os.getenv('SMTP_TO', '').split(',') if a.strip()
@@ -64,15 +64,15 @@ class Config:
     )
     
     # Processing Configuration
-    batch_size: int = int(os.getenv('BATCH_SIZE', '100'))
-    max_retries: int = int(os.getenv('MAX_RETRIES', '3'))
-    retry_delay: int = int(os.getenv('RETRY_DELAY', '5'))
+    batch_size: int = field(default_factory=lambda: int(os.getenv('BATCH_SIZE', '100')))
+    max_retries: int = field(default_factory=lambda: int(os.getenv('MAX_RETRIES', '3')))
+    retry_delay: int = field(default_factory=lambda: int(os.getenv('RETRY_DELAY', '5')))
     
     # Output Configuration
-    output_dir: str = os.getenv('OUTPUT_DIR', './reports')
+    output_dir: str = field(default_factory=lambda: os.getenv('OUTPUT_DIR', './reports'))
     
     # Global User Data Configuration
-    include_optional_fields: bool = os.getenv('INCLUDE_OPTIONAL_FIELDS', 'true').lower() == 'true'
+    include_optional_fields: bool = field(default_factory=lambda: os.getenv('INCLUDE_OPTIONAL_FIELDS', 'true').lower() == 'true')
 
 class OdinAPIClient:
     """
