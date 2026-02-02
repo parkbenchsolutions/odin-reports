@@ -22,9 +22,9 @@ This repository provides a robust solution for generating daily reports from Bro
 ### 🧑‍💻 Interactive Jupyter/Colab Notebooks
 For interactive, step-by-step reporting, data exploration, and ad-hoc analysis, this repository provides ready-to-use Jupyter/Colab notebooks:
 
-- **`odin_daily_call_report_{colab/vscode}_v01.ipynb`** — Colab/Jupyter notebook for daily call reports. Lets you configure, run, and analyze daily call detail records interactively.
-- **`odin_global_user_report_{colab/vscode}_v01.ipynb`** — Colab/Jupyter notebook for global user data extraction. Extracts and explores user data across all Service Providers.
-- **`odin_user_report_data_{colab/vscode}_v01.ipynb`** — Colab/Jupyter notebook for per-service-provider user reports. Generate and analyze user reports for individual Service Providers.
+- **`odin_daily_call_report_{colab/vscode}_v##.ipynb`** — Colab/Jupyter notebook for daily call reports. Lets you configure, run, and analyze daily call detail records interactively.
+- **`odin_global_user_report_{colab/vscode}_v##.ipynb`** — Colab/Jupyter notebook for global user data extraction. Extracts and explores user data across all Service Providers.
+- **`odin_user_report_data_{colab/vscode}_v##.ipynb`** — Colab/Jupyter notebook for per-service-provider user reports. Generate and analyze user reports for individual Service Providers.
 
 Each notebook:
 - Wraps the core logic in `daily_odin_report.py` for modular, testable execution
